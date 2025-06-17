@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DiggingDeeperController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RestTestController;
 use App\Http\Controllers\Blog\PostController;
@@ -19,6 +20,10 @@ Route::middleware([
 });
 
 Route::resource('rest', RestTestController::class)->names('restTest');
+Route::group(['prefix' => 'digging_deeper'], function () {
+    Route::get('collections', [DiggingDeeperController::class, 'collections'])
+        ->name('digging_deeper.collections');
+});
 
 // Користувацький блог
 Route::group(['namespace' => 'App\Http\Controllers\Blog', 'prefix' => 'blog'], function () {
