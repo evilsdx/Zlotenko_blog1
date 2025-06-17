@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Blog\Admin;
 
+use App\Http\Requests\BlogCategoryCreateRequest;
+use App\Http\Requests\BlogCategoryUpdateRequest;
 // use App\Http\Controllers\Controller;
 use App\Models\BlogCategory;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
+
+
 
 class CategoryController extends BaseController
 {
@@ -25,7 +28,7 @@ class CategoryController extends BaseController
 
         return view('blog.admin.categories.edit', compact('item', 'categoryList'));
     }
-    public function update(Request $request, $id)
+    public function update(BlogCategoryUpdateRequest $request, $id)
     {
         $item = BlogCategory::find($id);
         if (empty($item)) {
@@ -51,24 +54,38 @@ class CategoryController extends BaseController
                 ->withInput();
         }
     }
-
-
-
-
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        //
+        $item = new BlogCategory();
+        $categoryList = BlogCategory::all();
+
+        return view('blog.admin.categories.edit', compact('item', 'categoryList'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(BlogCategoryCreateRequest $request)
     {
-        //
+        $data = $request->input(); //отримаємо масив даних, які надійшли з форми
+        if (empty($data['slug'])) { //якщо псевдонім порожній
+            $data['slug'] = Str::slug($data['title']); //генеруємо псевдонім
+        }
+
+        $item = (new BlogCategory())->create($data); //створюємо об'єкт і додаємо в БД
+
+        if ($item) {
+            return redirect()
+                ->route('blog.admin.categories.edit', [$item->id])
+                ->with(['success' => 'Успішно збережено']);
+        } else {
+            return back()
+                ->withErrors(['msg' => 'Помилка збереження'])
+                ->withInput();
+        }
     }
 
     /**
