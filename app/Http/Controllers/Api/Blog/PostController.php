@@ -50,4 +50,29 @@ class PostController extends Controller
             ]
         ]);
     }
+    public function show($id)
+    {
+        $post = BlogPost::with(['user', 'category'])->findOrFail($id);
+
+        return response()->json([
+            'id' => $post->id,
+            'title' => $post->title,
+            'slug' => $post->slug,
+            'excerpt' => $post->excerpt,
+            'content_raw' => $post->content_raw,
+            'content' => $post->content,
+            'is_published' => $post->is_published,
+            'published_at' => $post->published_at,
+            'created_at' => $post->created_at,
+            'updated_at' => $post->updated_at,
+            'user' => [
+                'id' => $post->user->id,
+                'name' => $post->user->name
+            ],
+            'category' => [
+                'id' => $post->category->id,
+                'title' => $post->category->title
+            ]
+        ]);
+    }
 }

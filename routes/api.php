@@ -9,3 +9,4 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 Route::get('blog/posts', [PostController::class, 'index']);
 Route::get('blog/posts/paginated', [PostController::class, 'paginated']);
+Route::get('blog/posts/{id}', [PostController::class, 'show']);
